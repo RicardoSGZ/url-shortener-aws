@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>URL Shortener</title>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		#content {
+			width: 100%;
+		}
+		#content input {
+			padding: 5px;
+			margin-top: 5px;
+			margin-bottom: 5px;
+		}
+		#content #url_to_shorten_field {
+			width: 100%;
+		}
+		#content button {
+			padding: 10px;
+			background-color: green;
+			color: white;
+			border: none;
+			margin-bottom: 10px;
+		}
+		#content a {
+			font-size: 1.5em;
+		}
+		@media screen and (min-width:620px) {
+			#content {
+				width: 70%;
+				max-width: 600px;
+				margin: auto;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div id="content">
+		<h1>URL Shortener</h1>
+		<p>Write the URL that you want to shorten and a descriptive text to create the custom link (https://{your_domain}/{text}). Custom URLs will work for X days.</p>
+		<input type="text" id="url_to_shorten_field" placeholder="URL to shorten"><br/>
+		<input type="text" id="filename" placeholder="Descriptive text"><br/>
+		<button id="shorten_button">Shorten URL</button><br/>
+	</div>
+
+	<script src="https://cdn.rs1.es/jquery/jquery-3.4.1.min.js"></script>
+	<script>
+		const API_URL = "";
+		const DOMAIN_FOR_SHORT_LINKS = "";
+		//User clicks the button
+		$("#shorten_button").click(() => {
+			let url_to_shorten_value = $("#url_to_shorten_field").val();
+			let filename_value = $("#filename").val();
+			//If fields are not empty, save required data to an object
+			if(url_to_shorten_value != "" && filename_value != "") {
+				let data_obj = {
+					url_to_shorten: url_to_shorten_value,
+					filename: filename_value
+				}
+				//AJAX query to API URL
+				$.ajax({
+					method: "POST",
+					url: API_URL,
+					dataType: "text",
+					data: JSON.stringify(data_obj)
+					
+				}).done((response) => {
+					console.log(response);
+					//Show the short link
+					$("#content").append(
+							$("<a></a>").attr("href", DOMAIN_FOR_SHORT_LINKS + filename_value).attr("target", "_blank").text(DOMAIN_FOR_SHORT_LINKS + filename_value)
+						);
+				})
+				.fail((err) => {
+					console.log(err);
+					$("#content").append(
+							$("<p></p>").text(err.responseText)
+						);
+				})
+			}
+		})
+	</script>
+</body>
+</html>
